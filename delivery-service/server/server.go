@@ -3,23 +3,24 @@ package server
 import (
 	"context"
 	"net/http"
+
+	"github.com/andrewhowdencom/courses.pito/delivery-service/carriers"
 )
 
 type Server struct {
 	srv *http.Server
-}
 
-var defaultHandlers = map[string]http.HandlerFunc{
-	"/healthz":          healthz,
-	"/delivery-options": deliveryOptions,
+	// carriers are the carriers that can provide the shipping method.
+	carriers []carriers.Carrier
 }
 
 // New generates a new server, appropriately configured
 func New() *Server {
+	srv := &Server{}
 	mux := http.NewServeMux()
-	for k, h := range defaultHandlers {
-		mux.HandleFunc(k, h)
-	}
+
+	mux.HandleFunc("/healthz", srv.healthz)
+	mux.HandleFunc("/delivery-options", srv.deliveryOptions)
 
 	return &Server{
 		srv: &http.Server{

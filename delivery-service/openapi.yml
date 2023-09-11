@@ -52,9 +52,15 @@ paths:
         '400':
           description: The request was missing information or could not be understood
           content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/problem'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/problem'
+        '404':
+          description: "There are no delivery options available"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/problem'
 components:
   schemas:
     delivery-option:
