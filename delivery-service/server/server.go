@@ -9,7 +9,9 @@ type Server struct {
 	srv *http.Server
 }
 
-var defaultHandlers map[string]http.HandlerFunc
+var defaultHandlers = map[string]http.HandlerFunc{
+	"/healthz": healthz,
+}
 
 // New generates a new server, appropriately configured
 func New() *Server {
