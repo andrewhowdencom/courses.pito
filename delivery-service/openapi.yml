@@ -11,7 +11,7 @@ info:
   contact:
     name: Andrew Howden
     url: https://www.andrewhowden.com/about
-  license: 
+  license:
     name: AGPL-3.0
     url: https://github.com/andrewhowdencom/courses.pito/blob/main/LICENSE
 paths:
@@ -47,9 +47,14 @@ paths:
             application/json:
               schema:
                 type: array
-                items: 
+                items:
                   $ref: '#/components/schemas/delivery-option'
-
+        '400':
+          description: The request was missing information or could not be understood
+          content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/problem'
 components:
   schemas:
     delivery-option:
@@ -61,7 +66,7 @@ components:
             - svx
             - mmc
             - hid
-        cost: 
+        cost:
           $ref: '#/components/schemas/money'
         arrival:
           type: string
@@ -83,8 +88,36 @@ components:
           description: |
             The ISO code of the relevant currency. See [the standard](https://www.iso.org/iso-4217-currency-codes.html).
           type: string
-          examples: 
+          examples:
             - "EUR"
+    problem:
+      type: object
+      description: |
+        An object describing a problem encountered when interacting with the API.
+
+        Adheres to RFC7807 (Problem Details for HTTP APIs). Omits status, as it is within the HTTP response metadata.
+      properties:
+        type:
+          type: string
+          format: uri
+          description:
+            A URI reference (RFC3986) that identifies the problem type. This specification encourages that, when
+            dereferenced, it provide human-readable documentation for the problem type (e.g., using HTML). When
+            this member is not present, its value is assumed to be "about:blank".
+        title:
+          type: string
+          description:
+            A short, human-readable summary of the problem type. It SHOULD NOT change from occurrence to occurrence
+            of the problem, except for purposes of localization
+        detail:
+          type: string
+          description:
+            A human-readable explanation specific to this occurrence of the problem.
+        instance:
+          type: string
+          description:
+            A URI reference that identifies the specific occurrence of the problem.  It may or may not yield
+            further information if dereferenced.
     size:
       type: integer
       format: int64
@@ -94,7 +127,7 @@ components:
         - 320
     weight:
       type: integer
-      format: int32
+      format: int64
       description: |
         The weight of an object, measured in grams
       examples:

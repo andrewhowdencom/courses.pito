@@ -10,7 +10,8 @@ type Server struct {
 }
 
 var defaultHandlers = map[string]http.HandlerFunc{
-	"/healthz": healthz,
+	"/healthz":          healthz,
+	"/delivery-options": deliveryOptions,
 }
 
 // New generates a new server, appropriately configured
