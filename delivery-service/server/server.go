@@ -1,18 +1,36 @@
 package server
 
-import "fmt"
+import (
+	"context"
+	"net/http"
+)
 
-type Server struct{}
+type Server struct {
+	srv *http.Server
+}
+
+var defaultHandlers map[string]http.HandlerFunc
 
 // New generates a new server, appropriately configured
 func New() *Server {
-	return &Server{}
+	mux := http.NewServeMux()
+	for k, h := range defaultHandlers {
+		mux.HandleFunc(k, h)
+	}
+
+	return &Server{
+		srv: &http.Server{
+			Handler: mux,
+		},
+	}
 }
 
 func (s *Server) Listen(addr string) error {
-	return fmt.Errorf("not implemented")
+	s.srv.Addr = addr
+
+	return s.srv.ListenAndServe()
 }
 
 func (s *Server) Shutdown() error {
-	return fmt.Errorf("not implemetned")
+	return s.srv.Shutdown(context.Background())
 }
