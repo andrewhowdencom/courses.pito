@@ -48,9 +48,16 @@ result.
 ```bash
 curl 'localhost:9093/delivery-options?width=200&height=35&depth=150&weight=2500'
 
-# {
-#    ... (The Result)
-# }
+# [
+#   {
+#     "provider": "svx",
+#     "cost": {
+#       "total": 590,
+#       "currency": "EUR"
+#     },
+#     "arrival": "2023-09-11T18:00:00.000Z"
+#   }
+# ]
 ```
 
 ### Test

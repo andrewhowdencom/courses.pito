@@ -1,0 +1,101 @@
+openapi: 3.1.0
+info:
+  title: "Delivery Options Service"
+  version: 0.0.1
+  description: |
+    This service provides (fake) delivery options. In practice, it is used to demonstrate concepts
+    in the course "Practical introduction to observability", available on Udemy at:
+
+    * [h4n.link/pito](https://h4n.link/pito)
+
+  contact:
+    name: Andrew Howden
+    url: https://www.andrewhowden.com/about
+  license: 
+    name: AGPL-3.0
+    url: https://github.com/andrewhowdencom/courses.pito/blob/main/LICENSE
+paths:
+  /delivery-options:
+    get:
+      parameters:
+        - name: "width"
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/size'
+        - name: "height"
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/size'
+        - name: "depth"
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/size'
+        - name: "weight"
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/weight'
+      description: |
+        Fetches the list of delivery options, based on the supplied query parameters.
+      responses:
+        '200':
+          description: A list of delivery options
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/delivery-option'
+
+components:
+  schemas:
+    delivery-option:
+      type: "object"
+      properties:
+        provider:
+          type: string
+          examples:
+            - svx
+            - mmc
+            - hid
+        cost: 
+          $ref: '#/components/schemas/money'
+        arrival:
+          type: string
+          format: date-time
+          examples:
+            - '2023-09-11T18:00:00.000Z'
+    money:
+      type: "object"
+      description: |
+        A representation of some monetary value, in the base (non-decimal) unit of the specified
+        currency
+      properties:
+        total:
+          type: integer
+          format: int64
+          examples:
+            - 590
+        currency:
+          description: |
+            The ISO code of the relevant currency. See [the standard](https://www.iso.org/iso-4217-currency-codes.html).
+          type: string
+          examples: 
+            - "EUR"
+    size:
+      type: integer
+      format: int64
+      description: |
+        The distance between two points, measured in milimeters
+      examples:
+        - 320
+    weight:
+      type: integer
+      format: int32
+      description: |
+        The weight of an object, measured in grams
+      examples:
+        - 23480
