@@ -1,16 +1,20 @@
 # Delivery Service
 
-Throughout this course, this application will form a "persistent example" that we can return to to understand the 
+Throughout this course, this application will form a "persistent example" that we can return to to understand the
 concepts of observability.
 
-⚠️ This README has been written before the actual application, in a 
+⚠️ This README has been written before the actual application, in a
 [documentation first](https://dev.to/eminetto/document-first-48dh) approach. At the time of writing, it is not complete.
 
 ## Architecture
 
-The application is a RESTful API that you can query to fetch delivery options from different (fake) third party 
+The application is a RESTful API that you can query to fetch delivery options from different (fake) third-party
 providers. I mocked the third-party providers and made them generate random results and, occasionally, unexpected
-failures.
+failures. The (nonsensical) providers include:
+
+* **svx**: Stock Variant Express
+* **mmc**: Million Mile Company
+* **hid**: High Inertia Delivery
 
 The application publishes the results of the successful queries to an event stream to mock an "analytics" workflow.
 
@@ -38,7 +42,7 @@ Once built, you can run the application:
 ./delivery-service
 ```
 
-When running, you can open another terminal window and use standard tools (e.g., the browser or `curl`) to view the 
+When running, you can open another terminal window and use standard tools (e.g., the browser or `curl`) to view the
 result.
 
 ```bash
@@ -57,7 +61,7 @@ You can also test the application via:
 go test
 ```
 
-By default, the tests include tests to validate that the application produces the required observability. I designed 
+By default, the tests include tests to validate that the application produces the required observability. I designed
 this so learners can submit pull requests, making the application "observable," and use the test suite to validate
 whether their changes are successful.
 
