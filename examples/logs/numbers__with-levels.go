@@ -9,7 +9,7 @@ import (
 
 func main() {
 	if len(os.Args[1:]) == 0 {
-		fmt.Fprintf(os.Stderr, "%s: %s", time.Now(), "No argument supplied.\n")
+		fmt.Fprintf(os.Stderr, "INFO: %s: %s", time.Now(), "No argument supplied.\n")
 		return
 	}
 
@@ -17,7 +17,7 @@ func main() {
 	for _, in := range os.Args[1:] {
 		i, err := strconv.Atoi(in)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "%s: %s, %s (%s)", time.Now(), "wrong argument supplied", err, in)
+			fmt.Fprintf(os.Stderr, "ERROR: %s: %s, %s (%s)", time.Now(), "wrong argument supplied\n", err, in)
 			return
 		}
 
