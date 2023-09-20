@@ -9,6 +9,7 @@ import (
 
 	"github.com/andrewhowdencom/courses.pito/delivery-service/server"
 	"github.com/andrewhowdencom/courses.pito/delivery-service/telemetry"
+	"go.opentelemetry.io/contrib/instrumentation/runtime"
 )
 
 // flags that influence the programs behavior
@@ -60,5 +61,10 @@ func init() {
 	// Bootstrap the metrics
 	if err := telemetry.SetupOTelMetrics(telemetry.WithPrometheusHTTP("localhost:9094")); err != nil {
 		log.Error("failed to bootstrap metrics", "err", err)
+	}
+
+	// Start exporting runtime metrics (e.g. gc, memory, uptime)
+	if err := runtime.Start(); err != nil {
+		log.Error("failed to enable runtime metrics", "err", err)
 	}
 }
