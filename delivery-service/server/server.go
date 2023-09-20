@@ -17,7 +17,10 @@ type Server struct {
 
 // New generates a new server, appropriately configured
 func New(carriers *carriers.Carriers) *Server {
-	srv := &Server{}
+	srv := &Server{
+		carriers: carriers,
+	}
+
 	mux := http.NewServeMux()
 
 	// The binding of the method to the routes includes the "instrumentation middleware". The first example is
@@ -40,12 +43,12 @@ func New(carriers *carriers.Carriers) *Server {
 	)
 
 	mux.Handle("/delivery-options", otelhttp.NewHandler(http.HandlerFunc(srv.deliveryOptions), "delivery-options"))
-	return &Server{
-		srv: &http.Server{
-			Handler: mux,
-		},
-		carriers: carriers,
+	srv.srv = &http.Server{
+		Addr:    "localhost:9093",
+		Handler: mux,
 	}
+
+	return srv
 }
 
 func (s *Server) Listen(addr string) error {

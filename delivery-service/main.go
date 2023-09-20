@@ -27,8 +27,13 @@ func main() {
 	// SIGINT is the signal to terminate ("interrupt") the process.
 	signal.Notify(ch, syscall.SIGINT)
 
+	carriers, err := carriers.New(carriers.Defaults...)
+	if err != nil {
+		log.Error("failed to bootstrap carriers", "error", err)
+	}
+
 	// Setup the server
-	srv := server.New(&carriers.Carriers{})
+	srv := server.New(carriers)
 
 	// Run the server, but in its own goroutine without blocking this thread.
 	go func() {
