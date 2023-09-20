@@ -21,6 +21,10 @@ func New() *Server {
 
 	mux.HandleFunc("/healthz", srv.healthz)
 	mux.HandleFunc("/delivery-options", srv.deliveryOptions)
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusServiceUnavailable)
+		w.Write([]byte("Service Unavailable\n"))
+	})
 
 	return &Server{
 		srv: &http.Server{

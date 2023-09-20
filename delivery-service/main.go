@@ -8,6 +8,7 @@ import (
 	"syscall"
 
 	"github.com/andrewhowdencom/courses.pito/delivery-service/server"
+	"github.com/andrewhowdencom/courses.pito/delivery-service/telemetry"
 )
 
 // flags that influence the programs behavior
@@ -55,4 +56,9 @@ func init() {
 	log = slog.New(slog.NewJSONHandler(
 		os.Stderr, nil,
 	))
+
+	// Bootstrap the metrics
+	if err := telemetry.SetupOTelMetrics(telemetry.WithPrometheusHTTP("localhost:9094")); err != nil {
+		log.Error("failed to bootstrap metrics", "err", err)
+	}
 }
