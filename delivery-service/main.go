@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/andrewhowdencom/courses.pito/delivery-service/carriers"
 	"github.com/andrewhowdencom/courses.pito/delivery-service/server"
 	"github.com/andrewhowdencom/courses.pito/delivery-service/telemetry"
 	"go.opentelemetry.io/contrib/instrumentation/runtime"
@@ -27,7 +28,7 @@ func main() {
 	signal.Notify(ch, syscall.SIGINT)
 
 	// Setup the server
-	srv := server.New()
+	srv := server.New(&carriers.Carriers{})
 
 	// Run the server, but in its own goroutine without blocking this thread.
 	go func() {

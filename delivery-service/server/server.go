@@ -12,11 +12,11 @@ type Server struct {
 	srv *http.Server
 
 	// carriers are the carriers that can provide the shipping method.
-	carriers []carriers.Carrier
+	carriers *carriers.Carriers
 }
 
 // New generates a new server, appropriately configured
-func New() *Server {
+func New(carriers *carriers.Carriers) *Server {
 	srv := &Server{}
 	mux := http.NewServeMux()
 
@@ -44,6 +44,7 @@ func New() *Server {
 		srv: &http.Server{
 			Handler: mux,
 		},
+		carriers: carriers,
 	}
 }
 

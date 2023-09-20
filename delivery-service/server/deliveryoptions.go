@@ -83,18 +83,14 @@ func (srv *Server) deliveryOptions(w http.ResponseWriter, r *http.Request) {
 		Weight: pOK[ParamWeight],
 	}
 
-	offers := []*carriers.DeliveryOption{}
-	for _, c := range srv.carriers {
+	offers, err := srv.carriers.Query(pkg)
 
-		// Here, we do not want to _fail_ the request if a single provider fails. Instead, we just want to return
-		// whatever providers are available. Otherwise, we'd be only as available as a the worst downstream provider!
-		// However, that creates a dilemma: How do we know when we need to intervene with a provider?
-		next, _ := c.Query(pkg)
-		offers = append(offers, next...)
-	}
+	switch err {
+	case nil:
+		w.Header().Add("Content-Type", "application/json")
+		jw.Encode(offers)
 
-	// If there are no delivery methods, we want to indicate this to the user.
-	if len(offers) == 0 {
+	case carriers.ErrNoOffersFound:
 		w.Header().Add("Content-Type", problem.HTTPContentTypeJSON)
 		w.WriteHeader(http.StatusNotFound)
 
@@ -102,11 +98,17 @@ func (srv *Server) deliveryOptions(w http.ResponseWriter, r *http.Request) {
 		jw.Encode(&problem.Problem{
 			Type:   "delivery-options.local/problems/no-options",
 			Title:  "There are no delivery options available",
-			Detail: fmt.Sprintf("Despite querying %d providers, there are no options provided", len(srv.carriers)),
+			Detail: "Despite querying all providers, there are no options provided",
 		})
-		return
-	}
+	default:
+		w.Header().Add("Content-Type", problem.HTTPContentTypeJSON)
+		w.WriteHeader(http.StatusInternalServerError)
 
-	w.Header().Add("Content-Type", "application/json")
-	jw.Encode(offers)
+		// Hint: This can fail, but it is ignored.
+		jw.Encode(&problem.Problem{
+			Type:   "delivery-options.local/server/internal-server-error",
+			Title:  "An unexpected server error has occurred",
+			Detail: "An error that is not handled within the software has occurred. Please check telemetry for details",
+		})
+	}
 }
