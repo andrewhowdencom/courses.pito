@@ -1,0 +1,42 @@
+---
+name: "Report a bug"
+description: | 
+  Found something that doesn't look right within the course? Let me know, and I'll fix it up for you!
+labels:
+  - bug
+assignees:
+  - andrewhowdencom
+body:
+  - type: dropdown
+    id: section
+    attributes:
+      label: "Section"
+      description: "Which section was the bug in?"
+      options:
+        - Introduction
+        - Understanding Observability
+        - "Pillar 1: Logs"
+        - "Pillar 2: Distributed Tracing"
+        - "Pillar 3: Metrics"
+        - "Pillar 4: Profiling"
+        - "Pillar 5: Binary Introspection"
+        - "Putting it all together"
+  - type: input
+    id: lecture
+    attributes:
+      label: Lecture
+      description: "Which lecture was the bug in?"
+      placeholder: "introduction"
+  - type: input
+    id: timecode
+    attributes:
+      label: Time Code
+      description: At what point in time did the bug occur? (mm:ss)
+      placeholder: "00:15"
+  - type: textarea
+    id: bug
+    attributes:
+      label: "What happened?"
+      description: What was it that you saw that you didn't expect to? What did you expect?
+      placeholder: Tell us what happened, versus what should have
+      
