@@ -1,0 +1,37 @@
+---
+name: "Suggest an improvement"
+description: | 
+  Come up with an idea that would help you and other learners improve the course? Great! I'd love to
+  hear it 🙏
+labels:
+  - enhancement
+assignees:
+  - andrewhowdencom
+body:
+  - type: dropdown
+    id: section
+    attributes:
+      label: "Section"
+      description: "Which section should be improved?"
+      options:
+        - Introduction
+        - Understanding Observability
+        - "Pillar 1: Logs"
+        - "Pillar 2: Distributed Tracing"
+        - "Pillar 3: Metrics"
+        - "Pillar 4: Profiling"
+        - "Pillar 5: Binary Introspection"
+        - "Putting it all together"
+  - type: input
+    id: lecture
+    attributes:
+      label: Lecture
+      description: "Which lecture should be improved?"
+      placeholder: "introduction"
+  - type: textarea
+    id: improvement
+    attributes:
+      label: "How can we make it better?"
+      description: What is it that would improve your experience in the course?
+      placeholder: It would help my understanding if you ...
+      
