@@ -1,0 +1,15 @@
+---
+name: "Short"
+description: | 
+   Want a super brief (<60s) summary of one of the topics in the course? Great! Let me know and I'll write it up.
+labels:
+  - short
+assignees:
+  - andrewhowdencom
+body:
+  - type: textarea
+    id: short
+    attributes:
+      label: "What should the content of the short?"
+      description: Literally, what is the script of the short.
+      placeholder: "Have you ever wanted to know ..."
