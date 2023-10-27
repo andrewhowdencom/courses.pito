@@ -1,0 +1,15 @@
+---
+name: Lecture
+description: A 3 - 5 length video with an explanation accompanied by visuals, code examples or demonstrations
+title: "[Lecture] ..."
+labels: ["lecture"]
+assignees:
+  - andrewhowdencom
+
+body:
+  - type: textarea
+    id: learning-goal
+    attributes:
+      label: Learning Goal
+      description: What do we expect to have learners get out of this lecture?
+      placeholder: "At the end of this lecture, learners should ..."
