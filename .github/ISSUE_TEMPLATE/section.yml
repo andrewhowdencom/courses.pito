@@ -1,0 +1,37 @@
+---
+name: Section
+description: A group of lectures, a quiz, stories, optional assignments or cookbooks.
+title: "[Section] ..."
+labels: ["section"]
+assignees:
+  - andrewhowdencom
+
+body:
+  - type: textarea
+    id: objectives
+    attributes:
+      label: Objectives
+      description: What are the capabilities that we expect learners to have after completing this unit?
+      placeholder: "At the end of this section, learners should ..."
+  - type: input
+    id: expert
+    attributes:
+      label: Subject Matter Expert
+      description: Who will be the subject matter expert?
+      placeholder: "@andrewhowdencom"
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation
+      description: How will we validiate 
+      placeholder: "At the end of this section, learners should ..."  
+  - type: checkboxes
+    id: deliverables
+    attributes:
+      label: Deliverables
+      description: The following deliverables are planned
+      options:
+        - label: Quiz (#0)
+
+
+    
