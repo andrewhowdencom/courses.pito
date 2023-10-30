@@ -1,0 +1,46 @@
+---
+name: Announcement
+description: Something that should be broadcast to course participants (or potential ones). Mostly course updates.
+title: "[Announcement] ..."
+labels: ["announcement"]
+assignees:
+  - andrewhowdencom
+
+body:
+  - type: textarea
+    id: announcement
+    attributes:
+      label: Announcement
+      description: What do we want people to know and be excuted about after this announcement?
+      placeholder: |
+        This week a total of __X__ new students joined the course. __XX__ people were kind enough to review the course,
+        giving it a __XX__ and __XX__ respectively.
+
+        Updates to the course include:
+
+        🎥 __SOMETHING_WITH_VIDEO__
+        🪲 __SOME_BUG_FIXED__
+        💡 __DISCOVERY__
+
+  - type: checkboxes
+    id: media 
+    attributes:
+      label: Media
+      description: The following media types are scheduled
+      options:
+        - label: Text Summary
+        - label: Short
+  - type: checkboxes
+    id: channels
+    attributes:
+      label: Channels
+      description: The following channels are planned
+      options:
+        - label: LinkedIn
+        - label: LinkedIn Ads
+        - label: Twitter
+        - label: YouTube
+        - label: BlueSky
+        - label: TikTok
+        - label: Slack
+        - label: Udemy Course Messages
