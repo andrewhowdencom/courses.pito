@@ -22,6 +22,8 @@ body:
         🪲 __SOME_BUG_FIXED__
         💡 __DISCOVERY__
 
+        Enjoying the course so far? Share it with friends! Just send them the link "h4n.link/pito".
+
   - type: checkboxes
     id: media 
     attributes:
