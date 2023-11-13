@@ -12,4 +12,13 @@ body:
     attributes:
       label: "What should the content of the short?"
       description: Literally, what is the script of the short.
-      placeholder: "Have you ever wanted to know ..."
+      placeholder: "Let's talk about <observability|the observability course>"
+  - type: checkboxes
+    id: topic
+    attributes:
+      label: Topic
+      description: Let's talk about...
+      options:
+        - label: "#Observability"
+        - label: "#PITO (The practical introduction to observability)"
+        - label: "The #CourseProgress"
