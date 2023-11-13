@@ -1,0 +1,15 @@
+---
+name: 🚧 Work Package
+description: A work package is a predefined package that is designed to help learners deliver an outcome in their organization. Based on Kotters Model.
+title: "[Work Package] ..."
+labels: ["work-package"]
+assignees:
+  - andrewhowdencom
+
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+      description: After completing the work package, the learners organization should be able to ...
+      placeholder: "This work package ties into <pre-existing work>, and is based around Kotter's model. At the conclusion of this package, it is expected ..."
