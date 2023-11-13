@@ -1,5 +1,5 @@
 ---
-name: "Suggest an improvement"
+name: "✋ Suggest an improvement"
 description: | 
   Come up with an idea that would help you and other learners improve the course? Great! I'd love to
   hear it 🙏
@@ -34,4 +34,3 @@ body:
       label: "How can we make it better?"
       description: What is it that would improve your experience in the course?
       placeholder: It would help my understanding if you ...
-      
