@@ -1,0 +1,15 @@
+---
+name: 🚧 Story
+description: A description of how a technology or process has benefited me in the past. Follows a kind of, "hero's journey"
+title: "[Story] ..."
+labels: ["story"]
+assignees:
+  - andrewhowdencom
+
+body:
+  - type: textarea
+    id: moral
+    attributes:
+      label: Moral
+      description: What is the core message we expect learners to get from this story
+      placeholder: "After learning to this story, learners should be more likely to ..."
