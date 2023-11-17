@@ -64,6 +64,9 @@ func init() {
 		os.Stderr, nil,
 	))
 
+	// Bind the log to the telemetry package.
+	telemetry.Log = log
+
 	// Bootstrap the metrics
 	if err := telemetry.SetupOTelMetrics(telemetry.WithPrometheusHTTP("localhost:9094")); err != nil {
 		log.Error("failed to bootstrap metrics", "err", err)
