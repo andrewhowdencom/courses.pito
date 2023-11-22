@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
 	"runtime"
@@ -14,7 +15,16 @@ import (
 
 const Example = "counter_gc"
 
+var fLimit = flag.String("limit", "1m", "How long to run the program for")
+
 func main() {
+	// Calculate how long to run this test for
+	flag.Parse()
+	dur, err := time.ParseDuration(*fLimit)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// Define a variable that will contain memory statsitcs (when read).
 	var ms runtime.MemStats
 
@@ -83,7 +93,7 @@ func main() {
 		next := <-ti.C
 
 		// Cancel after 130 seconds
-		if i >= 60 {
+		if i >= int(dur.Seconds()) {
 			break
 		}
 
