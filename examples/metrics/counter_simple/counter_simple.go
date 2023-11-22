@@ -2,10 +2,13 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"pito.local/examples/metrics/setup"
 )
+
+const Example = "counter_simple"
 
 func main() {
 	// Here, we fetch a new "application level metric provider". This is the thing that we register all metrics against
@@ -14,7 +17,7 @@ func main() {
 	// There is convenience function to set a "global" meter provider, but it is omitted here for understanding. See
 	//
 	// 1. https://opentelemetry.io/docs/specs/otel/metrics/api/#meterprovider
-	mp, r, err := setup.NewMetricProvider("counter")
+	mp, r, err := setup.NewMetricProvider(Example)
 
 	if err != nil {
 		log.Fatal(err)
@@ -22,7 +25,7 @@ func main() {
 
 	// Here, we provide a new "meter" — a library specific provider of metrics instruments. These should be created per
 	// library, and are used to give a reference for where these metrics "Came from".
-	meter := mp.Meter("pito.local/examples/metrics/counter")
+	meter := mp.Meter(fmt.Sprintf("pito.local/examples/metrics/%s", Example))
 
 	// Create the counter object. Here, the the only option is "Int64Counter", and allows counting up to
 	// 18446744073709551615

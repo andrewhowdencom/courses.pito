@@ -60,9 +60,11 @@ func NewMetricProvider(applicationName string) (metric.MeterProvider, sdk.Reader
 		return nil, nil, fmt.Errorf("%w: %s", ErrFailedMeterSetup, err)
 	}
 
-	// WithReader(sdk.NewPeriodicReader) provides a reader that will periodically (Every 60s) collect the state
-	// of the metrics and export it via the wire transport to Prometheus.
-	r := sdk.NewPeriodicReader(exp)
+	// WithReader(sdk.NewPeriodicReader) provides a reader that will periodically collect the state
+	// of the metrics and export it via the wire transport to Prometheus. We have scheduled it much more frequently
+	// than normal (15s instead of 60s) so we do not need to run the examples for a long time, but typically
+	// 60s is fine.
+	r := sdk.NewPeriodicReader(exp, sdk.WithInterval(time.Second*15))
 
 	// Create the "meter provider", or the thing that we will use to create our metrics.
 	mp := sdk.NewMeterProvider(
