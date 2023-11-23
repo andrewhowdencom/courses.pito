@@ -28,6 +28,7 @@ const (
 var fLimit = flag.String("limit", "1m", "How long to run the program for")
 
 var (
+	// Common Errors
 	ErrFailedToReadPSI = errors.New("failed to read PSI")
 )
 
@@ -55,20 +56,20 @@ func main() {
 	// library, and are used to give a reference for where these metrics "Came from".
 	meter := mp.Meter(fmt.Sprintf("pito.local/examples/metrics/%s", Example))
 
-	// Create a series of metrics for each kind of "pressure".
-	counters := map[string]metric.Int64ObservableCounter{}
-	for _, k := range []string{PSICpu, PSIIO, PSIMemory} {
-		var err error
-		counters[k], err = meter.Int64ObservableCounter(
-			fmt.Sprintf("system.psi.%s.time", k),
-			metric.WithDescription(fmt.Sprintf("The total amount of time spent awaiting the %s resource", k)),
-			metric.WithUnit("us"),
-		)
-
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
+	// Create the counter instrument. A single instrument (system.psi.time) is created, with each resource excpected
+	// to be reflected as an attribute, and each delay type the same.
+	//
+	// This allows queries like:
+	//
+	// * sum(rate(system_psi_time_microseconds_total{delay="some"}[1m]))
+	//
+	// Which indicates whether the machine is "loaded somehow". The diagnostic utility of such a query might be
+	// limited.
+	counter, err := meter.Int64ObservableCounter(
+		"system.psi.time",
+		metric.WithDescription("The delay (some or full) a task experienced awaiting a resource"),
+		metric.WithUnit("us"),
+	)
 
 	// The creation of instruments _can fail_. Normally, it is better to initialize the counters first with a "noop"
 	// object to avoid the null pointer errors and provide a consistent interface, but here we'll just fatal if the
@@ -77,17 +78,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Here, we register the (concurrency-safe) callback to collect the metrics.
-	_, err = meter.RegisterCallback(
-		PSI(counters[PSICpu], counters[PSIIO], counters[PSIMemory]),
-		counters[PSICpu],
-		counters[PSIIO],
-		counters[PSIMemory],
-	)
+	// Here, we register each of the collectors to query the state of the relevant `/proc/pressure/<resource>` file,
+	// and fetch the appropriate data.
+	for _, v := range []string{PSICpu, PSIIO, PSIMemory} {
+		_, err := meter.RegisterCallback(PSI(v, counter), counter)
 
-	// As before, while we should handle this, the complexity is skipper for the example.
-	if err != nil {
-		log.Fatal(err)
+		// As before, while we should handle this, the complexity is skipped cfor the example.
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	// Wait for the program to run for a little while, collecting metrics.
@@ -120,56 +119,59 @@ func main() {
 // There are three aggreagetes and one total exported (in µs), where the aggregates are 10, 60 and 300 seconds
 // expressed as avg10, avg60 and avg300 respectively)
 //
-// This is implemented naively, as it is a demonstration and I didn't think about it too much.
+// This is implemented naively, as it is a demonstration and I didn't think about it too much. Implemented as a
+// function generator, as the way in which the callback is registered, the function that it receives
 //
 // See also,
 // 1. https://facebookmicrosites.github.io/psi/docs/overview
 // 2. https://docs.kernel.org/accounting/psi.html
 // 3. https://github.com/google/cadvisor/issues/3052
-func PSI(cpu, io, memory metric.Int64ObservableCounter) func(ctx context.Context, o metric.Observer) error {
-	lookup := map[string]metric.Int64ObservableCounter{
-		"cpu":    cpu,
-		"memory": memory,
-		"io":     io,
+func PSI(resource string, counter metric.Int64ObservableCounter) func(ctx context.Context, o metric.Observer) error {
+	// Define a noop function to return in the case this fails.
+	noop := func(ctx context.Context, o metric.Observer) error { return nil }
+
+	// Open the file, and keep it open.
+	handle, err := os.Open("/proc/pressure/" + resource)
+
+	if err != nil {
+		fmt.Println(ErrFailedToReadPSI, err)
+		return noop
 	}
 
 	return func(ctx context.Context, o metric.Observer) error {
-		// Iterate through all of the resource types (cpu, memory, io)
-		for _, r := range []string{"cpu", "memory", "io"} {
-			// Open t
-			fh, err := os.Open("/proc/pressure/" + r)
-			if err != nil {
-				log.Println(err)
-				return fmt.Errorf("%w: %s", ErrFailedToReadPSI, err)
+		// Rewind the handle to the start of the file, so we can iterate through it agian.
+		if _, err := handle.Seek(0, 0); err != nil {
+			return fmt.Errorf("%w: %s", ErrFailedToReadPSI, err)
+		}
+
+		// Create a "scanner" to tokenize and iterate through the file content. THe scanner
+		// is created each run, as it is cheap to do. The scanner iterate through "words" (sets of runes)
+		// delimited by a whitespace character)
+		// https://groups.google.com/g/golang-nuts/c/_eqP4nU4Cjw?pli=1
+		sc := bufio.NewScanner(handle)
+		sc.Split(bufio.ScanWords)
+		delay := "unknown"
+
+		for sc.Scan() {
+			// If the word that comes up is either "some" or "full", it indicates we're at the start of a new line.
+			if sc.Text() == "some" || sc.Text() == "full" {
+				delay = sc.Text()
 			}
 
-			reader := bufio.NewScanner(fh)
-			reader.Split(bufio.ScanLines)
-			for reader.Scan() {
-				// Iterate through each field.
-				fields := strings.Split(reader.Text(), " ")
-				t := "unknown"
-				var v int64
-				for _, f := range fields {
-					// The first field gives the type of
-					if f == "some" || f == "full" {
-						t = f
-					}
-
-					if strTime, found := strings.CutPrefix(f, "total="); found {
-						v, err = strconv.ParseInt(strTime, 10, 64)
-						if err != nil {
-
-							log.Println(err)
-							return fmt.Errorf("%w: %s", ErrFailedToReadPSI, err)
-						}
-						o.ObserveInt64(lookup[r], v, metric.WithAttributes(
-							attribute.Key("type").String(t),
-						))
-					}
+			// If the word is prefixed with "total=<blah>", than we're at the total ms delayed and we need to
+			// capture that data point
+			if after, isPresent := strings.CutPrefix(sc.Text(), "total="); isPresent {
+				total, err := strconv.ParseInt(after, 10, 64)
+				if err != nil {
+					return fmt.Errorf("%w: %s", ErrFailedToReadPSI, err)
 				}
-			}
 
+				// Record the metric
+				o.ObserveInt64(counter, total, metric.WithAttributes(
+					attribute.String("resource", resource),
+					attribute.String("delay", delay),
+				))
+			}
 		}
 
 		return nil
