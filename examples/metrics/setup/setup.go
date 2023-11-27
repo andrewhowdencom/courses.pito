@@ -36,7 +36,7 @@ func NewMetricProvider(applicationName string) (metric.MeterProvider, sdk.Reader
 	// as well as any "core attributes" it has.
 	res, err := resource.New(ctx, resource.WithAttributes(
 		semconv.ServiceName(applicationName),
-		semconv.HostName(hostname),
+		semconv.ServiceInstanceID(hostname),
 	))
 
 	if err != nil {
