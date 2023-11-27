@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"time"
 
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
@@ -29,11 +30,13 @@ var (
 // lifecycle management), and thus need to flush the metrics manually.
 func NewMetricProvider(applicationName string) (metric.MeterProvider, sdk.Reader, error) {
 	ctx := context.Background()
+	hostname, _ := os.Hostname()
 
 	// Setup the "application resource". This is the way in which the application is identified in OpenTelemetry,
 	// as well as any "core attributes" it has.
 	res, err := resource.New(ctx, resource.WithAttributes(
 		semconv.ServiceName(applicationName),
+		semconv.HostName(hostname),
 	))
 
 	if err != nil {
