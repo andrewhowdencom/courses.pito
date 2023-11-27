@@ -18,6 +18,7 @@ func main() {
 	//
 	// 1. https://opentelemetry.io/docs/specs/otel/metrics/api/#meterprovider
 	mp, r, err := setup.NewMetricProvider(Example)
+	ctx := context.Background()
 
 	if err != nil {
 		log.Fatal(err)
@@ -40,15 +41,15 @@ func main() {
 
 	// Express the internal state change. Here, we're expressing that I drank 3 coffees during the making of this
 	// section. I now have a stomach ache.
-	counter.Add(context.Background(), 1)
-	counter.Add(context.Background(), 1)
-	counter.Add(context.Background(), 1)
+	counter.Add(ctx, 1)
+	counter.Add(ctx, 1)
+	counter.Add(ctx, 1)
 
 	// Here, we're asking the metrics reader to "shutdown". While normally it periodically exports the metrics,
 	// these examples do not run long enough for an evaluation window to go past. So, we have to export them.
 	//
 	// It is good practice to shut these down if you have an application lifecycle process regardless.
-	if err := r.Shutdown(context.Background()); err != nil {
+	if err := r.Shutdown(ctx); err != nil {
 		log.Fatal(err)
 	}
 }

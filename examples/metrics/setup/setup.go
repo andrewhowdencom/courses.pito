@@ -11,7 +11,7 @@ import (
 	sdk "go.opentelemetry.io/otel/sdk/metric"
 
 	"go.opentelemetry.io/otel/sdk/resource"
-	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
+	semconv "go.opentelemetry.io/otel/semconv/v1.21.0"
 )
 
 var (
@@ -22,8 +22,8 @@ var (
 // learning, rather than for production. For more information, see:
 //
 // 1.https://github.com/open-telemetry/opentelemetry-go/commit/e44ea5cc7fa82cbbc839e69829e7660b6e0c7536
-// 2. examples/tracing/setup/setup.go
-// 3. https://github.com/MrAlias/otel-otlp-metric-example/blob/main/main.go
+// 2. xamples/tracing/setup/setup.go
+// 3.https://github.com/MrAlias/otel-otlp-metric-example/blob/main/main.go
 //
 // It returns both the meter provider and the reader, as the examples have no long lived persistence (or application
 // lifecycle management), and thus need to flush the metrics manually.
