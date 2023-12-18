@@ -163,6 +163,7 @@ func PSI(resource string, counter metric.Int64ObservableCounter) func(ctx contex
 			if after, isPresent := strings.CutPrefix(sc.Text(), "total="); isPresent {
 				total, err := strconv.ParseInt(after, 10, 64)
 				if err != nil {
+					delay = "unknown"
 					return fmt.Errorf("%w: %s", ErrFailedToReadPSI, err)
 				}
 
@@ -171,6 +172,8 @@ func PSI(resource string, counter metric.Int64ObservableCounter) func(ctx contex
 					attribute.String("resource", resource),
 					attribute.String("delay", delay),
 				))
+
+				delay = "unknown"
 			}
 		}
 
